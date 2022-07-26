@@ -1,2 +1,2 @@
 # FromGraveToHeaven
-Fighting game using rayib engine
+Fighting game using raylib engine
