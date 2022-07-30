@@ -1,10 +1,5 @@
-# directories
-.vscode
+# Directories
 build/
-out/
-
-# Binary
-AstroX-bin
 
 # Prerequisites
 *.d

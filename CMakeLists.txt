@@ -24,8 +24,6 @@ if (NOT raylib_FOUND) # If there's none, fetch and build raylib
     set(FETCHCONTENT_QUIET NO)
     FetchContent_Populate(raylib)
 
-    set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build the supplied examples
-
     # build raylib
     add_subdirectory(${raylib_SOURCE_DIR} ${raylib_BINARY_DIR})
 
@@ -33,6 +31,13 @@ if (NOT raylib_FOUND) # If there's none, fetch and build raylib
 
 endif()
 
-add_executable(${PROJECT_NAME} src/main.cpp )
+file(GLOB src_files
+  "*.h"
+  "*.hpp"
+  "src/main.cpp"
+  "assets"
+)
+
+add_executable(${PROJECT_NAME} ${src_files})
 set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)

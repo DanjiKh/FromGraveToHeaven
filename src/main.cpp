@@ -1,66 +1,106 @@
-/*******************************************************************************************
-*
-*   raylib [core] example - Basic window
-*
-*   Example originally created with raylib 4.2, last time updated with raylib 4.2
-*
-*   Example contributed by <user_name> (@<user_github>) and reviewed by Ramon Santamaria (@raysan5)
-*
-*   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
-*   BSD-like license that allows static linking with closed source software
-*
-*   Copyright (c) 2022 <user_name> (@<user_github>)
-*
-********************************************************************************************/
 
-#include "raylib.h"
+#include "raylib.h" 
+#include "include/vf2d.hpp"
 
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
-int main(void)
+#include "include/main.hpp"
+#include "include/intro.hpp"
+
+enum class GameStates
 {
-    // Initialization
-    //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    LAUNCHING, LOADING,
 
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+    INTRO    ,
+    MENU     , SAVES_MENU,
+    PLAYING  , PAUSE     , DEFEAT,
+    QUITTING
 
-    // TODO: Load resources / Initialize variables at this point
+    // CREDITS // Credits after the end of the game.
+}; GameStates _GameState = GameStates::LAUNCHING;
 
-    SetTargetFPS(60);
-    //--------------------------------------------------------------------------------------
 
-    // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+void SetupWindow() {
+    // SetExitKey(0);
+    // ToggleFullscreen();
+    SetTargetFPS(144);
+}
+
+void QuitApplication()
+{
+    _GameState = GameStates::QUITTING;
+}
+
+int main()
+{
+    const int screenWidth  = 640;
+    const int screenHeight = 360;
+
+    // SetConfigFlags(FLAG_VSYNC_HINT);
+    InitWindow (screenWidth, screenHeight, _NameOfApplicatoin);
+
+    SetupWindow();
+
+    GameStates _GameState = GameStates::LOADING;
+    
+    //----------------------------------------------------------------------------------------    
+    _TimeAccumilator = 0.0f;
+    _DeltaFade = 0.0f;
+
+    //----------------------------------------------------------------------------------------
+    // Start of updating game states
+    //----------------------------------------------------------------------------------------
+    while (!WindowShouldClose())
     {
-        // Update
-        //----------------------------------------------------------------------------------
-        // TODO: Update variables / Implement example logic at this point
-        //----------------------------------------------------------------------------------
+        _TimeAccumilator += GetFrameTime();
 
-        // Draw
-        //----------------------------------------------------------------------------------
+        switch (_GameState)
+        {
+            case GameStates::LOADING:
+                // UpdateLoad();
+                _GameState = GameStates::INTRO;
+                break;
+
+            case GameStates::INTRO:
+                UpdateIntro(GetFrameTime());
+                break;
+
+            case GameStates::MENU:
+                
+                break;
+
+            case GameStates::SAVES_MENU:
+                
+                break;
+
+            case GameStates::PLAYING:
+                
+                break;
+
+            case GameStates::PAUSE:
+                
+                break;
+        }
+
         BeginDrawing();
+            ClearBackground (Color{38, 36, 40});
 
-            ClearBackground(RAYWHITE);
+            DrawFPS(5, 5);
 
-            // TODO: Draw everything that requires to be drawn at this point:
+            // Intro
+            // ======================================//
+            if (_TimeAccumilator < 5.0f) {           //
+                DrawTitle (GetFrameTime());          //
+            }                                        //
+            else if (_TimeAccumilator = 5.0f) {      //
+                _GameState = GameStates::MENU;       //
+                ClearBackground (Color{0, 0, 0});    //
+            }                                        //
+            // ======================================//
 
-            DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);  // Example
 
         EndDrawing();
-        //----------------------------------------------------------------------------------
-    }
+   }
 
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-
-    // TODO: Unload all loaded resources at this point
-
-    CloseWindow();        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
+    CloseWindow();
 
     return 0;
 }
