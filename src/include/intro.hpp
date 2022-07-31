@@ -3,16 +3,25 @@
 #include "raylib.h"
 
 #include "main.hpp"
-// #include "vf2d.hpp"
+#include "vf2d.hpp"
+
+float _DeltaFade;
+
+int _TitleFontSize;
+
+Font _8_bit_Limit;
 
 void DrawTitle (float fTime) 
 { 
 	// TODO: Add fonts
 
-	int _textwidth = MeasureText (_NameOfApplicatoin, 20);
-    DrawText (_NameOfApplicatoin, GetScreenWidth() / 2 - _textwidth / 2, GetScreenHeight() / 2 - 10, 20, Color {255, 255, 255, static_cast<unsigned char>(_DeltaFade)});          
-
-			
+	// int _textwidth = MeasureText (_NameOfApplicatoin, _TitleFontSize);
+    // DrawText (_NameOfApplicatoin, GetScreenWidth() / 2 - _textwidth / 2, GetScreenHeight() / 2 - 10, _TitleFontSize, Color {255, 255, 255, static_cast<unsigned char>(_DeltaFade)});          
+	
+	Vector2 _Vtextwidth = MeasureTextEx (_8_bit_Limit, _NameOfApplicatoin, _TitleFontSize, 30);
+	Vector2 title_pos 	= Vector2 {(float)(GetScreenWidth() / 2 - _Vtextwidth.x / 2), (float)(GetScreenHeight() / 2 - _Vtextwidth.y / 2)};
+	DrawTextEx (_8_bit_Limit, _NameOfApplicatoin, title_pos, _TitleFontSize, 30, Color {255, 255, 255, static_cast<unsigned char>(_DeltaFade)});
+	
 	// Copyright
 	// DrawString (ScreenWidth() - GetTextSize("Copyright {team name} 2022 ").x - 5, ScreenHeight() - GetTextSize("Copyright {team name} 2022").y - 5, "Copyright Danilo Khvorost 2022", olc::Pixel(255, 255, 255));
 }

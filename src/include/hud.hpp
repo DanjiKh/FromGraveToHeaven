@@ -1,13 +1,23 @@
 #ifndef FGTH_HUD_HEADER
 #define FGTH_HUD_HEADER
 
-class HUD 
+#include "raylib.h"
+
+class ActiveScreen
 {
-public:
-	virtual void Draw();
+	public:
+		virtual void Draw();
+		virtual void Update();
 
 protected:
 	
+
+};
+
+class Menu : public ActiveScreen
+{
+	public:
+
 
 }
 

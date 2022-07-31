@@ -4,4 +4,5 @@
 constexpr char _NameOfApplicatoin[] = "From Grave to Heaven";
 
 long float _TimeAccumilator;
-float _DeltaFade;
+
+void QuitApplication();
