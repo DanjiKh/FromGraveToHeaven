@@ -35,7 +35,8 @@ file(GLOB src_files
   "*.h"
   "*.hpp"
   "src/main.cpp"
-  "assets"
+  "src/hud.cpp"
+  "resources"
 )
 
 add_executable(${PROJECT_NAME} ${src_files})
