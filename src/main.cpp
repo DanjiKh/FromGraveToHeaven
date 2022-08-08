@@ -6,6 +6,7 @@
 #include "include/intro.hpp"
 #include "include/hud.hpp"
 
+//----------------------------------------------------------------------------------------
 enum class GameStates
 {
     LAUNCHING, LOADING,
@@ -17,38 +18,118 @@ enum class GameStates
 
     // CREDITS // Credits after the end of the game.
 }; GameStates _GameState = GameStates::LAUNCHING;
+//----------------------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------------------
+class Intro : public ActiveScreen
+{
+    public:
+        void Draw() override
+        {
+            if (_TimeAccumilator < 5.0f && _GameState != GameStates::MENU) {
+                _TimeAccumilator += GetFrameTime();
+                DrawTitle (GetFrameTime());
+            } else if (_TimeAccumilator = 5.0f) {
+                _TimeAccumilator = 0.0f;
+                GoToMainMenu();
+            }
+        };
+}; Intro _Intro;
+//----------------------------------------------------------------------------------------
 
-void SetupWindow() {
-    // SetExitKey(0);
-    // ToggleFullscreen();
-    // SetTargetFPS (144);
-};
-
+//----------------------------------------------------------------------------------------
 class MainMenu : public ActiveScreen
 {
     public:
         void Draw() override
         {
-            ClearBackground (Color {24, 41, 82});
+            // DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), ColorAlpha(BLACK, 1.0f));
+            ClearBackground (Color {105, 105, 105, 255});
 
-            CreateBasicButton(
+            if(CreateBasicButton(
                     vf2d  (100.0f, 200.0f),
                     vf2d  (40 + MeasureText("START GAME", 20), 50.0f),
-                    Color {43, 53, 149, 255},
+                    Color {255, 255, 255, 255},
                     "START GAME",
-                    Color {112, 69, 175, 255}
-                );
+                    Color {0, 0, 0, 255}
+                )) {
+                GoToSavesMenu();
+            }
+            if(CreateBasicButton(
+                    vf2d  (100.0f, 270.0f),
+                    vf2d  (40 + MeasureText("QUIT", 20), 50.0f),
+                    Color {255, 255, 255, 255},
+                    "QUIT",
+                    Color {0, 0, 0, 255}
+                ))
+                QuitApplication();
 
         };
-};
-MainMenu _MainMenu;
+}; MainMenu _MainMenu;
+//----------------------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------------------
+class SavesMenu : public ActiveScreen
+{
+    public:
+        void Draw() override
+        {
+            // DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), ColorAlpha(BLACK, 1.0f));
+            ClearBackground (Color {0, 0, 0, 255});
+
+            if(CreateBasicButton(
+                    vf2d  (200.0f, 200.0f),
+                    vf2d  (40 + MeasureText("NEW LOAD", 20), 50.0f),
+                    Color {255, 255, 255, 255},
+                    "NEW LOAD",
+                    Color {0, 0, 0, 255}
+                ))
+                QuitApplication();
+
+        };
+}; SavesMenu _SavesMenu;
+//----------------------------------------------------------------------------------------
+
+
+// Binding functions
+//----------------------------------------------------------------------------------------
+void SetupWindow()
+{
+    SetExitKey (0);
+    // ToggleFullscreen();
+    SetTargetFPS (60);
+};
+
+void GoToMainMenu()
+{
+    _GameState = GameStates::MENU;
+    SetActiveScreen (&_MainMenu);
+};
+
+void UpdateMenu()
+{
+    if(IsKeyPressed(KEY_ESCAPE))
+        QuitApplication();
+};
+
+// TODO: Add load system
+//---------------------
+void GoToSavesMenu()
+{
+    _GameState = GameStates::SAVES_MENU;
+    SetActiveScreen (&_SavesMenu);
+};
+
+// void StartGame()
+// {
+
+// };
 
 void QuitApplication()
 {
     _GameState = GameStates::QUITTING;
 };
+//----------------------------------------------------------------------------------------
 
 int main()
 {       
@@ -56,12 +137,11 @@ int main()
     const int screenHeight = 360;
           int screenScale  = 2;
 
-    // SetConfigFlags(FLAG_VSYNC_HINT);
     InitWindow (screenWidth * screenScale, screenHeight * screenScale, _NameOfApplicatoin);
 
     SetupWindow();
 
-    GameStates _GameState = GameStates::LOADING;
+    _GameState = GameStates::LOADING;
     
     // Initialisation 
     //----------------------------------------------------------------------------------------    
@@ -76,24 +156,22 @@ int main()
     //----------------------------------------------------------------------------------------
     // Start of updating game states
     //----------------------------------------------------------------------------------------
-    while (!WindowShouldClose())
+    while (!WindowShouldClose() && _GameState != GameStates::QUITTING)
     {   
-        _TimeAccumilator += GetFrameTime();
-
         switch (_GameState)
         {
             case GameStates::LOADING:
                 // UpdateLoad();
                 _GameState = GameStates::INTRO;
-
                 break;
 
             case GameStates::INTRO:
-                UpdateIntro(GetFrameTime());
+                SetActiveScreen (&_Intro);
+                UpdateIntro (GetFrameTime());
                 break;
 
             case GameStates::MENU:
-                
+                UpdateMenu();
                 break;
 
             case GameStates::SAVES_MENU:
@@ -114,16 +192,6 @@ int main()
             ClearBackground (Color{38, 36, 40});
 
             DrawFPS (5 * screenScale, 5 * screenScale);
-
-            // Intro
-            // ===================================== //
-            if (_TimeAccumilator < 5.0f) {           //
-                DrawTitle (GetFrameTime());          //
-            } else if (_TimeAccumilator = 5.0f) {    //
-                _GameState = GameStates::MENU;       //
-                SetActiveScreen (&_MainMenu);        //
-            }                                        //
-            // ===================================== //
 
             DrawScreen();
 

@@ -6,17 +6,16 @@
 #include "raylib.h"
 #include "vf2d.hpp"
 
-// ==========================================
-struct Button
-{	
-	vf2d  		pos;
-	vf2d  		size;
-	Color 		color;
-	char*		text;
-	Color 		text_color;
-};
-// ==========================================
+// struct Button
+// {
+// 	Rectangle box;
+// 	Color     color;
+// 	char*  	  text;
+// 	Color     text_color;
+// 	bool      isCliked;
+// };
 
+// Basic class for game screens
 //----------------------------------------------------------------------------------------
 class ActiveScreen
 {
@@ -24,17 +23,13 @@ class ActiveScreen
 		virtual void Draw() = 0;
 
 	protected:
-		void CreateBasicButton  (vf2d pos, vf2d size, Color color, char* text, Color text_color);
-		// void DrawButtons   		();
-
-	
-	protected:
-		std::vector<Button> _aButtons;
+		bool CreateBasicButton (vf2d pos, vf2d size, Color color, char* text, Color text_color);
+		// void DrawButtons    ();
 };
 //----------------------------------------------------------------------------------------
 
 void SetActiveScreen (ActiveScreen* screen);
 
-void DrawScreen();
+void DrawScreen		 ();
 
 #endif
