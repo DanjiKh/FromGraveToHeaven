@@ -18,9 +18,9 @@ void DrawTitle (float fTime)
 	// int _textwidth = MeasureText (_NameOfApplicatoin, _TitleFontSize);
     // DrawText (_NameOfApplicatoin, GetScreenWidth() / 2 - _textwidth / 2, GetScreenHeight() / 2 - 10, _TitleFontSize, Color {255, 255, 255, static_cast<unsigned char>(_DeltaFade)});          
 	
-	Vector2 _Vtextwidth = MeasureTextEx (_8_bit_Limit, _NameOfApplicatoin, _TitleFontSize, 15);
+	Vector2 _Vtextwidth = MeasureTextEx (_8_bit_Limit, _NameOfApplicatoin, _TitleFontSize, 20);
 	Vector2 title_pos 	= Vector2 {(float)(GetScreenWidth() / 2 - _Vtextwidth.x / 2), (float)(GetScreenHeight() / 2 - _Vtextwidth.y / 2)};
-	DrawTextEx (_8_bit_Limit, _NameOfApplicatoin, title_pos, _TitleFontSize, 15, Color {255, 255, 255, static_cast<unsigned char>(_DeltaFade)});
+	DrawTextEx (_8_bit_Limit, _NameOfApplicatoin, title_pos, _TitleFontSize, 20, Color { 255, 255, 255, static_cast<unsigned char>(_DeltaFade)});
 	
 	// Copyright
 	int _textwidth = MeasureText (_CopyrightString, 20);

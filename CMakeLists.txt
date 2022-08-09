@@ -36,6 +36,7 @@ file(GLOB src_files
   "*.hpp"
   "src/main.cpp"
   "src/hud.cpp"
+  "src/game.cpp"
   "resources"
 )
 

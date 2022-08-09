@@ -5,7 +5,8 @@ constexpr char _NameOfApplicatoin[] = "From Grave to Heaven";
 
 long float _TimeAccumilator;
 
-void UpdateMenu     ();
 void GoToMainMenu   ();
+void UpdateMenu     ();
 void GoToSavesMenu  ();
+void StartGame		();
 void QuitApplication();
