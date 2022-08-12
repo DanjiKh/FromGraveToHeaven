@@ -1,3 +1,6 @@
+#ifndef FGTH_GAMEHUD_HEADER
+#define FGTH_GAMEHUD_HEADER
+
 #include "raylib.h"
 #include "vf2d.hpp"
 
@@ -10,3 +13,5 @@ class GameScreen : public ActiveScreen
 	public:
 		void Draw() override;
 };
+
+#endif

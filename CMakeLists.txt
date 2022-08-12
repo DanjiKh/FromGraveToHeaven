@@ -4,14 +4,14 @@ project(FromGraveToHeaven)
 
 set(CMAKE_CXX_STANDART 17)
 
-set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build the supplied examples
-set(BUILD_GAMES    OFF CACHE BOOL "" FORCE) # or games
+set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(BUILD_GAMES    OFF CACHE BOOL "" FORCE)
 
 set(raylib_DIR "C:/raylib/raylib/cmake")
 
 find_package(raylib 4.0 QUIET)
 
-if (NOT raylib_FOUND) # If there's none, fetch and build raylib
+if (NOT raylib_FOUND)
   include(FetchContent)
 
   FetchContent_Declare(

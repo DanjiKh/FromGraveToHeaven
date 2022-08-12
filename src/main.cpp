@@ -1,4 +1,3 @@
-
 #include "raylib.h" 
 #include "include/vf2d.hpp"
 
@@ -100,7 +99,7 @@ void SetupWindow()
 {
     SetExitKey (0);
     // ToggleFullscreen();
-    SetTargetFPS (300);
+    SetTargetFPS (60);
 };
 
 void GoToMainMenu()
