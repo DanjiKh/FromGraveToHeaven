@@ -8,5 +8,5 @@ long float _TimeAccumilator;
 void GoToMainMenu   ();
 void UpdateMenu     ();
 void GoToSavesMenu  ();
-void StartGame		();
+void StartNewGame	();
 void QuitApplication();

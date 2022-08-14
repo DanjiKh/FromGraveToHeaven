@@ -1,5 +1,4 @@
 #include "raylib.h"
-#include "include/vf2d.hpp"
 
 #include "include/hud.hpp"
 
@@ -16,9 +15,9 @@ void DrawScreen()
 		_ActiveScreen->Draw();
 };
 
-bool ActiveScreen::CreateBasicButton (vf2d pos, vf2d size, Color color, char* text, Color text_color)
+bool ActiveScreen::CreateBasicButton (Vector2 pos, Vector2 size, Color color, char* text, Color text_color)
 {
-	Rectangle b   = { pos.x(), pos.y(), size.x(), size.y() };
+	Rectangle b   = { pos.x, pos.y, size.x, size.y };
 
 	bool hovered  = CheckCollisionPointRec (GetMousePosition(), b);
 	bool released = IsMouseButtonReleased  (MOUSE_BUTTON_LEFT);
@@ -26,8 +25,8 @@ bool ActiveScreen::CreateBasicButton (vf2d pos, vf2d size, Color color, char* te
 	
 	int width     = MeasureText(text, 20);
 
-	DrawRectangle (pos.x(), pos.y(), size.x(), size.y(), color);
-	DrawText 	  (text, pos.x() + 20, pos.y() + size.y() / 2 - 10, 20, text_color);
+	DrawRectangle (pos.x, pos.y, size.x, size.y, color);
+	DrawText 	  (text, pos.x + 20, pos.y + size.y / 2 - 10, 20, text_color);
 
 	return clicked;
 

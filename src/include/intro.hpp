@@ -3,11 +3,9 @@
 #include "raylib.h"
 
 #include "main.hpp"
-#include "vf2d.hpp"
 
 float _DeltaFade;
-
-int _TitleFontSize;
+int   _TitleFontSize;
 
 Font _8_bit_Limit;
 

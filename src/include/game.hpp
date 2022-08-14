@@ -2,11 +2,10 @@
 #define FGTH_GAMEHUD_HEADER
 
 #include "raylib.h"
-#include "vf2d.hpp"
-
 #include "hud.hpp"
 
 void InitGame();
+void SetGameScreen();
 
 class GameScreen : public ActiveScreen
 {

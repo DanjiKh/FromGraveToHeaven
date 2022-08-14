@@ -9,8 +9,6 @@ set(BUILD_GAMES    OFF CACHE BOOL "" FORCE)
 
 set(raylib_DIR "C:/raylib/raylib/cmake")
 
-find_package(raylib 4.0 QUIET)
-
 if (NOT raylib_FOUND)
   include(FetchContent)
 
@@ -42,4 +40,8 @@ file(GLOB src_files
 
 add_executable(${PROJECT_NAME} ${src_files})
 set(raylib_VERBOSE 1)
-target_link_libraries(${PROJECT_NAME} raylib)
+target_link_libraries(${PROJECT_NAME} 
+  raylib
+  -static 
+  -lpthread
+)
