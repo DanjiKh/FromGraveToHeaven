@@ -4,6 +4,8 @@
 
 #include "main.hpp"
 
+#include <cstring>
+
 float _DeltaFade;
 int   _TitleFontSize;
 

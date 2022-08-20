@@ -84,8 +84,9 @@ class SavesMenu : public ActiveScreen
                     Color {255, 255, 255, 255},
                     "NEW GAME",
                     Color {0, 0, 0, 255}
-                ))
+                )) {
                 StartNewGame();
+            }
         };
 } _SavesMenu;
 //----------------------------------------------------------------------------------------
@@ -96,7 +97,7 @@ void SetupWindow()
 {
     SetExitKey   (0);
     // ToggleFullscreen();
-    SetTargetFPS (60);
+    SetTargetFPS (300);
 };
 
 void GoToMainMenu()

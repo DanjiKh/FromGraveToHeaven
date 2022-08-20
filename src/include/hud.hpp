@@ -13,8 +13,7 @@ class ActiveScreen
 		virtual void Draw() = 0;
 
 	protected:
-		bool CreateBasicButton (Vector2 pos, Vector2 size, Color color, char* text, Color text_color);
-		// void DrawButtons    ();
+		bool CreateBasicButton (Vector2 pos, Vector2 size, Color color, std::string text, Color text_color);
 };
 //----------------------------------------------------------------------------------------
 

@@ -1,19 +1,19 @@
 #ifndef FGTH_OBJECTS_HEADER
 #define FGTH_OBJECTS_HEADER
 
+#include "raylib.h"
 #include <iostream>
 #include <string>
 #include <cmath>
-
-#include "raylib.h"
+#include <map>
 
 //----------------------------------------------------------------------------------------
-enum class AnimationState
+enum class EntityStates
 {
-	IDLE 		, WALKING, 
-	JUMPING		, 
-	ATTACK      , COMBO
-} _AnimationState;
+	IDLE   , WALKING, 
+	JUMPING, 
+	ATTACK , COMBO
+};
 //----------------------------------------------------------------------------------------
 
 class ObjectRoot
@@ -23,41 +23,66 @@ class ObjectRoot
 		Vector2  size;
 };
 
-/*
-	+----------------------------------------------+
-	|          Branch for dynamic objects          |			
-	+----------------------------------------------+
-*/
 class DynamicObject: public ObjectRoot
 {
 	public:
 		Vector2 vel;
+		Vector2 speed;
 		float 	gravity;
 };
+
+void updateGravity (DynamicObject& a, float delT);
 
 class Player : public DynamicObject
 {
 	public:
-		Vector2 speed;
-		bool  	jump;
-		float 	HP;
-		float 	damage;
-		bool  	damage_counted;
+		bool  			canJump;
+		float 			HP;
+		float 			damage;
+		bool  			damage_counted;
+		bool 			isJumping = false;
+
+		int attacks_count;
+		float late_;
+		bool IsAttacking = false;
+		bool IsTimerActive = false;
+		
 	public:
-		void UpdateInputs(float delT)
+		Player();
+		inline EntityStates getCurrentState() const { return _currentstate; };
+		void setState (EntityStates newState);
+
+		void UpdateMoving 		 (float delT);
+		void UpdateJumping 		 (float delT);
+		void SetAnimationState 	 ();
+
+		void delayPunch			 (float delT)
 		{
-			vel.x = 0.0f;
-
-			if (IsKeyDown (KEY_A)) {
-				vel.x += -1.0f;
+			if(IsTimerActive)
+				late_ -= delT;
+		};
+			
+			template <typename A>
+		void DamageCalculating	 (A& a)
+		{
+			if (damage_counted == false && a.damage_counted == false) {
+				damage *= a.damage_coefficient;
+				damage = damage / a.HP;
+				damage_counted = true;
+				a.damage_counted = true;
 			}
-			if (IsKeyDown (KEY_D)) {
-				vel.x += 1.0f;
+		};
+			
+			template <typename A>
+		void takeDamage			 (A& a, bool collision)
+		{
+			if (collision && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+				a.damage_coefficient -= damage;
 			}
+		};
 
-			// pos += vel * Vector2 (200.0f, 35.0f) * delT;
-			pos.x += vel.x * 200.0f * delT;
-		}
+	private:
+		EntityStates _currentstate;
 };
 
 class Boss : public DynamicObject
@@ -67,51 +92,179 @@ class Boss : public DynamicObject
 		float 	HP;
 		float 	damage;
 		bool  	damage_counted;
+		float 	damage_coefficient;
 };
 
 class AnimatedObject : public ObjectRoot
 {
 	public:
+		enum class PlayMode
+		{
+			LOOP,
+			SINGLE
+		};
+
+	public:
+		void 			   setState (std::string newState);
+		inline std::string getState () const { return state; };
+
+		void Draw()
+		{
+			if (playMode == PlayMode::LOOP) {
+				if (frameCounter >= frame_amount) {
+					frameCounter = 0;
+				};
+				if (_currFps >= frameSpeed) {
+					_currFps = 0;
+					frameCounter++;
+				};
+			} else {
+				if (!isFinished) {
+					if (frameCounter >= frame_amount) {
+						isFinished = true;
+					};
+					if (_currFps >= frameSpeed) {
+						_currFps = 0;
+						frameCounter++;
+					};
+				}
+			}
+
+			if (_flip == 1)
+				img.width = -img.width;
+			else
+				img.width = round(img.width);
+
+			FrameRec.x = (float)frameCounter * (float)img.width / frame_amount;
+			DrawTextureRec (img, FrameRec, pos, color);
+			
+			_currFps += GetFrameTime();
+		};
+
+	public:
+		PlayMode 	playMode = PlayMode::LOOP;
+		uint8_t 	_flip	 = 0;
 		Texture2D 	img;
-		Vector2   	pos;
 		int       	frame_amount;
 		Rectangle 	FrameRec;
 		Color 		color;
-		int 		frameSpeed;
+		float 		frameSpeed;
+		float 		_currFps   	 = 0;
+		int 		frameCounter = 0;
+		bool 		isFinished = false;
 
-	private:
-		int currentFrame = 0;
-		int frameCounter = 0;
+	protected:
+		std::string state;
 
-	public:
-		void DrawAnimatedObject()
-		{
-			frameCounter++;
-
-			if (frameCounter >= (60 / frameSpeed)) {
-				frameCounter = 0;
-				currentFrame++;
-
-				if (currentFrame > frame_amount)
-					currentFrame = 0;
-				FrameRec.x = (float)currentFrame * (float)img.width / frame_amount;	
-			}
-
-			DrawTextureRec (img, FrameRec, pos, color);
-		};
-
-		void CheckAnimationState()
-		{
-			if (IsKeyDown (KEY_A) || IsKeyDown (KEY_D)) {
-				_AnimationState = AnimationState::WALKING;
-			} else if (IsKeyDown (KEY_SPACE)) {
-				_AnimationState = AnimationState::JUMPING;
-			} else {
-				_AnimationState = AnimationState::IDLE;
-			}
-		};
-
-		void FLipTextureHoriz() { img.width = -img.width; };
 };
+
+
+template <typename A, typename B, typename C, typename D>
+void combo_check(A& a, B& b, C& c, D& d, Texture2D first_punch, Texture2D second_punch, Texture2D third_punch)
+		{
+			switch (a.attacks_count) {
+				case 1 :
+					a.IsTimerActive = true;
+					if(!b.isFinished)
+					{
+                        a.IsTimerActive = false;
+
+                        c.isFinished = false;
+                        c.frameCounter = 1;
+                        d.isFinished = false;
+                        d.frameCounter = 1;
+
+
+                        b.Draw();
+					}
+					else
+					{
+						a.IsAttacking = false;
+						a.IsTimerActive = true;
+					}
+					if (a.late_ <= 2)
+					{
+						a.attacks_count = 0; 
+						a.late_ = 3;
+						a.IsAttacking = false;
+						b.isFinished = false;
+                        b.frameCounter = 1;
+                        a.IsTimerActive = false;
+					}
+
+					break;
+
+				case 2 :
+					if (a.late_ >= 2) { 
+						if(!c.isFinished)
+						{
+							a.IsTimerActive = false;
+
+                        	b.isFinished = false;
+                        	b.frameCounter = 1;
+                        	d.isFinished = false;
+                        	d.frameCounter = 1;
+
+                        	c.Draw();
+						}
+						else
+						{
+							a.IsAttacking = false;
+							a.IsTimerActive = true;
+						}
+					} 
+					else if(a.late_ <= 2){
+						a.attacks_count = 0; 
+						a.late_ = 3;
+						a.IsAttacking = false;
+						b.isFinished = false;
+                        b.frameCounter = 1;
+                        a.IsTimerActive = false;
+
+					}
+
+					break; 
+
+				case 3 :
+					if (a.late_ >= 1) {
+						if(!d.isFinished)
+						{
+							a.IsTimerActive = false;
+
+                        	c.isFinished = false;
+                        	c.frameCounter = 1;
+                        	b.isFinished = false;
+                        	b.frameCounter = 1;
+
+
+                        	d.Draw();
+						}
+						else
+						{
+							a.IsAttacking = false;
+							a.IsTimerActive = true;
+
+							a.late_ = 3;
+							a.attacks_count = 0;
+							a.IsAttacking = false;
+
+							b.isFinished = false;
+                    		b.frameCounter = 1;
+						}
+					}
+					else if(a.late_ <= 1){
+						a.attacks_count = 0; 
+						a.late_ = 3;
+						a.IsAttacking = false;
+						b.isFinished = false;
+						c.isFinished = false;
+                        b.frameCounter = 1;
+                        c.frameCounter = 1;
+                        a.IsTimerActive = false;
+					}
+
+					break;
+			}
+		};
 
 #endif
