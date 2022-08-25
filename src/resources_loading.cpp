@@ -2,6 +2,7 @@
 #include "raymath.h"
 
 #include "include/resources_loading.hpp"
+#include "include/resources_ids.hpp"
 #include "include/main.hpp"
 #include "include/hud.hpp"
 
@@ -40,9 +41,15 @@ size_t TotalToLoad = 0;
 void InitResources()
 {
 	_LoadingScreen = new LoadingScreen();
-	SetActiveScreen(_LoadingScreen);
+	SetActiveScreen (_LoadingScreen);
 
+	// Player Idle
 	TexturesToLoad.emplace_back("resources/Graphics/Player/Mehses/Idle/Player_idle_spriteshit.png");
+	TexturesToLoad.emplace_back("resources/Graphics/Player/Mehses/Walking/Player_walking_spriteshit.png");
+	TexturesToLoad.emplace_back("resources/Graphics/Player/Mehses/Jumping/Jump/Player_Jumping_spriteshit1.png");
+	TexturesToLoad.emplace_back("resources/Graphics/Player/Mehses/Attacks/First Punch/Player_first_punch_spriteshit.png");
+	TexturesToLoad.emplace_back("resources/Graphics/Player/Mehses/Attacks/Second Punch/Player_second_punch_spriteshit.png");
+	TexturesToLoad.emplace_back("resources/Graphics/Player/Mehses/Attacks/Third Punch/Player_third_punch.spriteshit.png");
 
 	TotalToLoad = TexturesToLoad.size();
 };
@@ -52,9 +59,9 @@ void CleanupResources()
 	if (_LoadingScreen != nullptr)
 		delete(_LoadingScreen);
 
-	UnloadTexture(DefaultTexture);
+	UnloadTexture (DefaultTexture);
 	for (const Texture& texture : LoadedTextures)
-		UnloadTexture(texture);
+		UnloadTexture (texture);
 
 	LoadedTextures.clear();
 	DefaultTexture.id = 0;
@@ -79,6 +86,14 @@ void UpdateLoad()
 		}
 	};
 
-	_LoadingScreen->Progress = LoadedItems/float(TotalToLoad);
+	_LoadingScreen->Progress = LoadedItems / float(TotalToLoad);
+};
+
+const Texture& GetTexture (int id)
+{
+	if (id < 0 || id > int(LoadedTextures.size()))
+		return DefaultTexture;
+
+	return LoadedTextures[id];
 };
 

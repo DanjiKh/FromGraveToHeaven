@@ -5,6 +5,8 @@
 #include "include/game.hpp"
 #include "include/game_screen.hpp"
 #include "include/objects.hpp"
+#include "include/resources_loading.hpp"
+#include "include/resources_ids.hpp"
 
 #include <cmath>
 
@@ -20,7 +22,7 @@ AnimatedObject first_punch_anim;
 AnimatedObject second_punch_anim;
 AnimatedObject third_punch_anim;
 
-Texture2D player_idle;
+Texture player_idle;
 Texture2D player_walking;
 Texture2D player_jumping;
 Texture2D player_punch;
@@ -64,13 +66,15 @@ void InitGame()
 	//----------------------------------------------------------------------------------------
 	// Downloading Textures
 	//----------------------------------------------------------------------------------------
-	player_idle 		= LoadTexture("resources/Graphics/Player/Mehses/Idle/Player_idle_spriteshit.png");
-	player_walking  	= LoadTexture("resources/Graphics/Player/Mehses/Walking/Player_walking_spriteshit.png");
-	player_jumping  	= LoadTexture("resources/Graphics/Player/Mehses/Jumping/Jump/Player_Jumping_spriteshit1.png");
-	player_punch 		= LoadTexture("resources/Graphics/Player/Mehses/Attacks/First Punch/Player_first_punch_spriteshit.png");
-	player_second_punch = LoadTexture("resources/Graphics/Player/Mehses/Attacks/Second Punch/Player_second_punch_spriteshit.png");
-	player_third_punch 	= LoadTexture("resources/Graphics/Player/Mehses/Attacks/Third Punch/Player_third_punch.spriteshit.png");
+	
 
+	// player_idle 		= LoadTexture("resources/Graphics/Player/Mehses/Idle/Player_idle_spriteshit.png");
+	player_idle			= GetTexture (PlayerIdleSprite);
+	player_walking  	= GetTexture (PlayerWalkingSprite);
+	player_jumping  	= GetTexture (PlayerJumpingSprite);
+	player_punch 		= GetTexture (PlayerPunchingSprite);
+	player_second_punch = GetTexture (PlayerSecondPunchSprite);
+	player_third_punch 	= GetTexture (PlayerThirdPunchSptie);
 
 
 

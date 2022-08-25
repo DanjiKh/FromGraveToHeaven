@@ -98,7 +98,6 @@ class SavesMenu : public ActiveScreen
 void SetupWindow()
 {
     SetExitKey   (0);
-    // ToggleFullscreen();
     SetTargetFPS (300);
 };
 
@@ -170,11 +169,12 @@ int main()
 
     SetupWindow();
 
+    InitResources();
+
     _GameState = GameStates::LOADING;
     
     // Initialisation 
-    //----------------------------------------------------------------------------------------    
-    // TODO: Create function UpdateLodad(), and update in game state.
+    //----------------------------------------------------------------------------------------
 
     _TimeAccumilator = 0.0f;
     _DeltaFade       = 0.0f;
@@ -205,12 +205,12 @@ int main()
                 
                 break;
 
-            case GameStates::PLAYING:
-                UpdateGame();
-                break;
-
             case GameStates::PAUSE:
                 
+                break;
+
+            case GameStates::PLAYING:
+                UpdateGame();
                 break;
         };
 
