@@ -6,6 +6,8 @@
 
 #include <cstring>
 
+float _TimeAccumilator;
+
 float _DeltaFade;
 int   _TitleFontSize;
 

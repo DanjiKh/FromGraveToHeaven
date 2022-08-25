@@ -1,9 +1,11 @@
-#include "raylib.h" 
+#include "raylib.h"
 
 #include "include/main.hpp"
 #include "include/hud.hpp"
+#include "include/resources_loading.hpp"
 #include "include/intro.hpp"
 #include "include/game.hpp"
+#include "include/game_screen.hpp"
 
 //----------------------------------------------------------------------------------------
 enum class GameStates
@@ -100,6 +102,18 @@ void SetupWindow()
     SetTargetFPS (300);
 };
 
+void CompleteLoading()
+{
+    _GameState = GameStates::MENU;
+    SetActiveScreen(&_MainMenu);
+};
+
+void StartIntro()
+{
+    _GameState = GameStates::INTRO;
+    SetActiveScreen (&_Intro);
+};
+
 void GoToMainMenu()
 {
     _GameState = GameStates::MENU;
@@ -126,6 +140,18 @@ void StartNewGame()
     SetActiveScreen (nullptr);
 
     InitGame();
+};
+
+void PauseGame()
+{
+    _GameState = GameStates::PAUSE;
+};
+
+void ResumeGame()
+{
+    _GameState = GameStates::PLAYING;
+    SetActiveScreen(nullptr);
+    SetGameScreen();
 };
 
 void QuitApplication()
@@ -164,9 +190,7 @@ int main()
         switch (_GameState)
         {
             case GameStates::LOADING:
-                // UpdateLoad();
-                _GameState = GameStates::INTRO;
-                SetActiveScreen (&_Intro);
+                UpdateLoad();
                 break;
 
             case GameStates::INTRO:
@@ -182,8 +206,7 @@ int main()
                 break;
 
             case GameStates::PLAYING:
-                if (IsKeyPressed (KEY_ESCAPE))
-                    QuitApplication();
+                UpdateGame();
                 break;
 
             case GameStates::PAUSE:
@@ -203,6 +226,7 @@ int main()
     };
 
     UnloadFont (_8_bit_Limit);
+    CleanupResources();
     CloseWindow();
 
     return 0;
