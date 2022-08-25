@@ -1,7 +1,6 @@
 #include "raylib.h"
 #include "include/objects.hpp"
 
-
 Player::Player()
 {
 	_currentstate = EntityStates::IDLE;
@@ -45,11 +44,17 @@ void Player::SetAnimationState()
 		setState(EntityStates::WALKING);
 	} else if (isJumping) {
 		setState(EntityStates::JUMPING);
-	} else if (IsMouseButtonPressed (MOUSE_BUTTON_LEFT)) {
+	} else if (IsAttacking) {
 		setState(EntityStates::ATTACK);
 	} else {
 		setState(EntityStates::IDLE);
 	}
+};
+
+void Player::delayPunch (float delT)
+{
+	if (IsTimerActive)
+		late_ -= delT;
 };
 
 void updateGravity(DynamicObject& a, float delT)

@@ -49,21 +49,17 @@ class Player : public DynamicObject
 		
 	public:
 		Player();
-		inline EntityStates getCurrentState() const { return _currentstate; };
-		void setState (EntityStates newState);
+		EntityStates getCurrentState() const { return _currentstate; };
+		void 		 setState (EntityStates newState);
 
 		void UpdateMoving 		 (float delT);
 		void UpdateJumping 		 (float delT);
 		void SetAnimationState 	 ();
 
-		void delayPunch			 (float delT)
-		{
-			if(IsTimerActive)
-				late_ -= delT;
-		};
+		void delayPunch			 (float delT);
 			
-			template <typename A>
-		void DamageCalculating	 (A& a)
+			template <class A>
+		void DamageCalculating (A& a)
 		{
 			if (damage_counted == false && a.damage_counted == false) {
 				damage *= a.damage_coefficient;
@@ -73,8 +69,8 @@ class Player : public DynamicObject
 			}
 		};
 			
-			template <typename A>
-		void takeDamage			 (A& a, bool collision)
+			template <class A>
+		void takeDamage (A& a, bool collision)
 		{
 			if (collision && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
 				a.damage_coefficient -= damage;
@@ -103,14 +99,19 @@ class AnimatedObject : public ObjectRoot
 			LOOP,
 			SINGLE
 		};
+		enum class FlipTexture
+		{
+			NONE,
+			HORIZONTAL
+		};
 
 	public:
-		void 			   setState (std::string newState);
-		inline std::string getState () const { return state; };
+		void 		setState (std::string newState);
+		std::string getState () const { return state; };
 
 		void Draw()
 		{
-			if (playMode == PlayMode::LOOP) {
+			if (play_mode == PlayMode::LOOP) {
 				if (frameCounter >= frame_amount) {
 					frameCounter = 0;
 				};
@@ -130,10 +131,12 @@ class AnimatedObject : public ObjectRoot
 				}
 			}
 
-			if (_flip == 1)
+
+			if (_flip == FlipTexture::HORIZONTAL) {
 				img.width = -img.width;
-			else
+			} else {
 				img.width = round(img.width);
+			}
 
 			FrameRec.x = (float)frameCounter * (float)img.width / frame_amount;
 			DrawTextureRec (img, FrameRec, pos, color);
@@ -142,9 +145,10 @@ class AnimatedObject : public ObjectRoot
 		};
 
 	public:
-		PlayMode 	playMode = PlayMode::LOOP;
-		uint8_t 	_flip	 = 0;
+		PlayMode 	play_mode = PlayMode::LOOP;
+		FlipTexture _flip	 = FlipTexture::NONE;
 		Texture2D 	img;
+
 		int       	frame_amount;
 		Rectangle 	FrameRec;
 		Color 		color;
@@ -155,37 +159,34 @@ class AnimatedObject : public ObjectRoot
 
 	protected:
 		std::string state;
-
 };
 
 
-template <typename A, typename B, typename C, typename D>
+template <class A, class B, class C, class D>
 void combo_check(A& a, B& b, C& c, D& d, Texture2D first_punch, Texture2D second_punch, Texture2D third_punch)
 		{
 			switch (a.attacks_count) {
 				case 1 :
 					a.IsTimerActive = true;
-					if(!b.isFinished)
-					{
-                        a.IsTimerActive = false;
+
+					if (!b.isFinished) {
+						a.IsTimerActive = false;
 
                         c.isFinished = false;
                         c.frameCounter = 1;
                         d.isFinished = false;
                         d.frameCounter = 1;
 
+                       	b.Draw();
 
-                        b.Draw();
-					}
-					else
-					{
+					} else {
 						a.IsAttacking = false;
 						a.IsTimerActive = true;
 					}
-					if (a.late_ <= 2)
-					{
+
+					if (a.late_ <= 2.0f) {
 						a.attacks_count = 0; 
-						a.late_ = 3;
+						a.late_ = 3.0f;
 						a.IsAttacking = false;
 						b.isFinished = false;
                         b.frameCounter = 1;
@@ -195,9 +196,8 @@ void combo_check(A& a, B& b, C& c, D& d, Texture2D first_punch, Texture2D second
 					break;
 
 				case 2 :
-					if (a.late_ >= 2) { 
-						if(!c.isFinished)
-						{
+					if (a.late_ >= 2.0f) { 
+						if(!c.isFinished) {
 							a.IsTimerActive = false;
 
                         	b.isFinished = false;
@@ -206,29 +206,25 @@ void combo_check(A& a, B& b, C& c, D& d, Texture2D first_punch, Texture2D second
                         	d.frameCounter = 1;
 
                         	c.Draw();
-						}
-						else
-						{
+
+						} else {
 							a.IsAttacking = false;
 							a.IsTimerActive = true;
 						}
-					} 
-					else if(a.late_ <= 2){
+					} else if(a.late_ <= 2.0f) {
 						a.attacks_count = 0; 
-						a.late_ = 3;
+						a.late_ = 3.0f;
 						a.IsAttacking = false;
 						b.isFinished = false;
                         b.frameCounter = 1;
                         a.IsTimerActive = false;
-
 					}
 
 					break; 
 
 				case 3 :
-					if (a.late_ >= 1) {
-						if(!d.isFinished)
-						{
+					if (a.late_ >= 1.0f) {
+						if (!d.isFinished) {
 							a.IsTimerActive = false;
 
                         	c.isFinished = false;
@@ -236,25 +232,21 @@ void combo_check(A& a, B& b, C& c, D& d, Texture2D first_punch, Texture2D second
                         	b.isFinished = false;
                         	b.frameCounter = 1;
 
-
                         	d.Draw();
-						}
-						else
-						{
+						} else {
 							a.IsAttacking = false;
 							a.IsTimerActive = true;
 
-							a.late_ = 3;
+							a.late_ = 3.0f;
 							a.attacks_count = 0;
 							a.IsAttacking = false;
 
 							b.isFinished = false;
                     		b.frameCounter = 1;
 						}
-					}
-					else if(a.late_ <= 1){
+					} else if(a.late_ <= 1.0f){
 						a.attacks_count = 0; 
-						a.late_ = 3;
+						a.late_ = 3.0f;
 						a.IsAttacking = false;
 						b.isFinished = false;
 						c.isFinished = false;

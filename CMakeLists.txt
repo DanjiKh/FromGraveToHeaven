@@ -35,7 +35,9 @@ file(GLOB src_files
   "src/main.cpp"
   "src/hud.cpp"
   "src/game.cpp"
+  "src/game_screen.cpp"
   "src/objects.cpp"
+  "src/resources_loading.cpp"
   "resources"
 )
 

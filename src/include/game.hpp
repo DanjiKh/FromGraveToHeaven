@@ -1,15 +1,6 @@
-#ifndef FGTH_GAMEHUD_HEADER
-#define FGTH_GAMEHUD_HEADER
+#pragma once
 
-#include "hud.hpp"
-
-void InitGame     ();
+void InitGame();
 void SetGameScreen();
-
-class GameScreen : public ActiveScreen
-{
-	public:
-		void Draw() override;
-};
-
-#endif
+void QuitGame();
+void UpdateGame();
