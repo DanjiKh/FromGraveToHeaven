@@ -38,13 +38,10 @@ file(GLOB src_files
   "src/game_screen.cpp"
   "src/objects.cpp"
   "src/resources_loading.cpp"
+  "src/animated_sprites.cpp"
   "resources"
 )
 
 add_executable(${PROJECT_NAME} ${src_files})
 set(raylib_VERBOSE 1)
-target_link_libraries(${PROJECT_NAME} 
-  raylib
-  -static 
-  -lpthread
-)
+target_link_libraries(${PROJECT_NAME} raylib)
