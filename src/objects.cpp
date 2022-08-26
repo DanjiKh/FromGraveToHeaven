@@ -1,9 +1,14 @@
 #include "raylib.h"
 #include "include/objects.hpp"
+#include "include/animated_sprites.hpp"
+#include "include/resources_ids.hpp"
 
 Player::Player()
 {
 	_currentstate = EntityStates::IDLE;
+
+	_Animation.addAnimation("idle", PlayerIdleSprite, 6, 0.19f);
+	_Animation.setAnimation("idle");
 }
 
 void Player::setState (EntityStates newState)

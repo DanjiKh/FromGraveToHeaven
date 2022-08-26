@@ -2,6 +2,7 @@
 #define FGTH_OBJECTS_HEADER
 
 #include "raylib.h"
+#include "animated_sprites.hpp"
 #include <iostream>
 #include <string>
 #include <cmath>
@@ -46,6 +47,7 @@ class Player : public DynamicObject
 		float late_;
 		bool IsAttacking = false;
 		bool IsTimerActive = false;
+		AnimatedSprite _Animation;
 		
 	public:
 		Player();
@@ -81,6 +83,7 @@ class Player : public DynamicObject
 		EntityStates _currentstate;
 };
 
+
 class Boss : public DynamicObject
 {
 	public:
@@ -90,77 +93,6 @@ class Boss : public DynamicObject
 		bool  	damage_counted;
 		float 	damage_coefficient;
 };
-
-class AnimatedObject : public ObjectRoot
-{
-	public:
-		enum class PlayMode
-		{
-			LOOP,
-			SINGLE
-		};
-		enum class FlipTexture
-		{
-			NONE,
-			HORIZONTAL
-		};
-
-	public:
-		void 		setState (std::string newState);
-		std::string getState () const { return state; };
-
-		void Draw()
-		{
-			if (play_mode == PlayMode::LOOP) {
-				if (frameCounter >= frame_amount) {
-					frameCounter = 0;
-				};
-				if (_currFps >= frameSpeed) {
-					_currFps = 0;
-					frameCounter++;
-				};
-			} else {
-				if (!isFinished) {
-					if (frameCounter >= frame_amount) {
-						isFinished = true;
-					};
-					if (_currFps >= frameSpeed) {
-						_currFps = 0;
-						frameCounter++;
-					};
-				}
-			}
-
-
-			if (_flip == FlipTexture::HORIZONTAL) {
-				img.width = -img.width;
-			} else {
-				img.width = round(img.width);
-			}
-
-			FrameRec.x = (float)frameCounter * (float)img.width / frame_amount;
-			DrawTextureRec (img, FrameRec, pos, color);
-			
-			_currFps += GetFrameTime();
-		};
-
-	public:
-		PlayMode 	play_mode = PlayMode::LOOP;
-		FlipTexture _flip	 = FlipTexture::NONE;
-		Texture2D 	img;
-
-		int       	frame_amount;
-		Rectangle 	FrameRec;
-		Color 		color;
-		float 		frameSpeed;
-		float 		_currFps   	 = 0;
-		int 		frameCounter = 0;
-		bool 		isFinished = false;
-
-	protected:
-		std::string state;
-};
-
 
 template <class A, class B, class C, class D>
 void combo_check(A& a, B& b, C& c, D& d, Texture2D first_punch, Texture2D second_punch, Texture2D third_punch)
