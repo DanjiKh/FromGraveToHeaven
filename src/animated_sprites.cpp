@@ -7,9 +7,9 @@ std::string AnimatedSprite::getCurrAnimation () const
 	return curr_state;
 };
 
-void AnimatedSprite::addAnimation (std::string newName, int img_id, int frames, float fps)
+void AnimatedSprite::addAnimation (std::string newName, int img_id, int frames, float fps, PlayMode mode)
 {	
-	loaded_anims[newName] = Sprite { img_id, frames, fps };
+	loaded_anims[newName] = Sprite { img_id, frames, fps, mode};
 };
 
 void AnimatedSprite::setAnimation (std::string newState)
@@ -17,12 +17,13 @@ void AnimatedSprite::setAnimation (std::string newState)
 	if (newState != curr_state) {
 		curr_state = newState;
 		frameCounter = 0;
+		isFinished = false;
 	}
 };
 
 void AnimatedSprite::Draw (Vector2& pos, Color tint)
 {
-	if (play_mode == PlayMode::LOOP) {
+	if (loaded_anims[curr_state].mode == PlayMode::LOOP) {
 		if (frameCounter >= loaded_anims[curr_state].frames_amount) {
 			frameCounter = 0;
 		};
@@ -33,6 +34,7 @@ void AnimatedSprite::Draw (Vector2& pos, Color tint)
 	} else {
 		if (!isFinished) {
 			if (frameCounter >= loaded_anims[curr_state].frames_amount) {
+				frameCounter = 1;
 				isFinished = true;
 			};
 			if (_currFps >= loaded_anims[curr_state].fps) {
@@ -61,4 +63,9 @@ void AnimatedSprite::Draw (Vector2& pos, Color tint)
 	DrawTextureRec (img, FrameRec, pos, tint);
 
 	_currFps += GetFrameTime();
+};
+
+void AnimatedSprite::setPlayMode (PlayMode mode)
+{
+	play_mode = mode;
 };

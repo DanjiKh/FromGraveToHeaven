@@ -6,12 +6,8 @@
 #include <vector>
 #include <map>
 
-struct Sprite
-{
-	int   img_id;
-	int   frames_amount;
-	float fps;
-};
+struct Sprite;
+
 
 class AnimatedSprite
 {
@@ -31,14 +27,11 @@ class AnimatedSprite
 	public:
 		std::string getCurrAnimation() const;
 
-		void addAnimation (std::string newName, int img_id, int frames, float fps);
+		void addAnimation (std::string newName, int img_id, int frames, float fps, PlayMode mode);
 		void setAnimation (std::string newState);
 		void setPlayMode  (PlayMode mode);
 		
 		void Draw (Vector2& pos, Color tint);
-
-	private:
-		// void CheckPosition (Vector2& pos);
 
 	public:
 		PlayMode 	play_mode = PlayMode::LOOP;
@@ -57,5 +50,13 @@ class AnimatedSprite
 		std::string 				  curr_state;
 		std::map<std::string, Sprite> loaded_anims;
 
+};
+
+struct Sprite 
+{
+	int   img_id;
+	int   frames_amount;
+	float fps;
+	AnimatedSprite::PlayMode mode;
 };
 

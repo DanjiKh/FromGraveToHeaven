@@ -56,7 +56,7 @@ class Player : public DynamicObject
 
 		void UpdateMoving 		 (float delT);
 		void UpdateJumping 		 (float delT);
-		void SetAnimationState 	 ();
+		void checkState ();
 
 		void delayPunch			 (float delT);
 			

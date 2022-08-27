@@ -5,10 +5,25 @@
 
 Player::Player()
 {
+	pos   = Vector2 {0.0f, 0.0f};
+	size  = Vector2 {192.0f, 210.0f};
+	vel   = Vector2 {0.0f, 0.0f};
+	speed = Vector2 {200.0f, 80.0f};
+	gravity = 9.8f;
+	canJump = false;
+	HP = 100.0f;
+   	damage = 20.0f;
+   	damage_counted = false;
+   	attacks_count = 0;
+   	late_ = 3.0f;
+
 	_currentstate = EntityStates::IDLE;
 
-	_Animation.addAnimation("idle", PlayerIdleSprite, 6, 0.19f);
-	_Animation.setAnimation("idle");
+	_Animation.addAnimation ("idle", PlayerIdleSprite, 6, 0.18f, AnimatedSprite::PlayMode::LOOP);
+	_Animation.addAnimation ("walking", PlayerWalkingSprite, 6, 0.19f, AnimatedSprite::PlayMode::LOOP);
+	_Animation.addAnimation ("jumping", PlayerJumpingSprite, 8, 0.08f, AnimatedSprite::PlayMode::SINGLE);
+
+	_Animation.setAnimation ("idle");
 }
 
 void Player::setState (EntityStates newState)
@@ -32,7 +47,7 @@ void Player::UpdateMoving (float delT)
 
 void Player::UpdateJumping (float delT)
 {
-	auto p0 = pos.y - 150;
+	auto p0 = pos.y - 100;
 	while (pos.y >= p0)
 	{
 		pos.y += vel.y * speed.y * delT;
@@ -43,7 +58,7 @@ void Player::UpdateJumping (float delT)
 	}
 };
 
-void Player::SetAnimationState()
+void Player::checkState()
 {
 	if ((IsKeyDown (KEY_D) || IsKeyDown (KEY_A)) && !isJumping) {
 		setState(EntityStates::WALKING);
