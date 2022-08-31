@@ -12,10 +12,9 @@
 #include <cmath>
 
 Player _player;
+ObjectRoot _ground;
 
 GameScreen _GameScreen(_player);
-
-ObjectRoot _ground;
 
 void InitGame()
 {
@@ -33,38 +32,6 @@ void InitGame()
 
     _ground.pos = { 0, 650.0f };
 	_ground.size = { 640.0f*2.0f, 120.0f };
-
-	//---------------------------------------------------------------------------------------
-	// Creating Animated Objects
-	//---------------------------------------------------------------------------------------
-
-    // alcohol_anim.img 		  = alcohol_idle;
-    // alcohol_anim.pos 		  = _alcohol.pos; 
-    // alcohol_anim.frame_amount = 7;
-    // alcohol_anim.FrameRec 	  = {0.0f, 0.0f, (float)alcohol_anim.img.width/(float)alcohol_anim.frame_amount, (float)alcohol_anim.img.height};
-    // alcohol_anim.color        = Color {255, 255, 255, 200};
-    // alcohol_anim.frameSpeed   = 0.19;
-
-    // first_punch_anim.img = player_punch;
-    // first_punch_anim.pos = _player.pos; 
-    // first_punch_anim.frame_amount = 10;
-    // first_punch_anim.FrameRec = {0.0f, 0.0f, (float)first_punch_anim.img.width/(float)first_punch_anim.frame_amount, (float)first_punch_anim.img.height};
-    // first_punch_anim.color = WHITE;
-    // first_punch_anim.frameSpeed = 0.1;
-
-    // second_punch_anim.img = player_second_punch;
-    // second_punch_anim.pos = _player.pos; 
-    // second_punch_anim.frame_amount = 10;
-    // second_punch_anim.FrameRec = {0.0f, 0.0f, (float)second_punch_anim.img.width/(float)second_punch_anim.frame_amount, (float)second_punch_anim.img.height};
-    // second_punch_anim.color = WHITE;
-    // second_punch_anim.frameSpeed = 0.1;
-
-    // third_punch_anim.img = player_third_punch;
-    // third_punch_anim.pos = _player.pos; 
-    // third_punch_anim.frame_amount = 13;
-    // third_punch_anim.FrameRec = {0.0f, 0.0f, (float)third_punch_anim.img.width/(float)third_punch_anim.frame_amount, (float)third_punch_anim.img.height};
-    // third_punch_anim.color = WHITE;
-    // third_punch_anim.frameSpeed = 0.1;
 };
 
 void SetGameScreen()
@@ -72,63 +39,85 @@ void SetGameScreen()
 	SetActiveScreen (&_GameScreen);
 };
 
-void checkPlayerAnimation()
-{
-	switch(_player.getCurrentState())
-	{
-		case EntityStates::IDLE:
-			_player._Animation.setAnimation ("idle");
-			break;
-
-		case EntityStates::WALKING:
-			_player._Animation.setAnimation ("walking");
-			break;
-
-		case EntityStates::JUMPING:
-			_player._Animation.setAnimation ("jumping");
-			break;
-	};
-};
-
-void UpdateGame()
-{
-	if (IsKeyPressed (KEY_ESCAPE) || !IsWindowFocused())
-	{
-			PauseGame();
-			return;
-	};
-
+void UpdatePlayer() {
 	Rectangle playerBox  = {_player.pos.x , _player.pos.y , _player.size.x , _player.size.y};
 	Rectangle ground = {_ground.pos.x , _ground.pos.y , _ground.size.x , _ground.size.y};
+	
+	_player.checkState();
 
-	_player.UpdateMoving (GetFrameTime());
-
-	if (CheckCollisionRecs(playerBox, ground)) {
-		_player.vel.y = 0.0f;
-		_player.canJump = true;
-		_player.pos.y = _ground.pos.y - _player.size.y;
+	// Gravity
+	//----------------------------------------------------------------------------------------
+	if (CheckCollisionRecs (playerBox, ground)) {
+		_player.vel.y     = 0.0f; // TODO: make a function for resolve collisions
+		_player.canJump   = true;
+		_player.isJumping = false; // Finishing all updates for jump
 	} else {
 		updateGravity (_player, GetFrameTime());
 	}
+	//----------------------------------------------------------------------------------------
 
-	if (_player.canJump && IsKeyPressed(KEY_SPACE)) {
+	if (_player.getCurrentState() != EntityStates::ATTACK) {
+		_player.UpdateMoving (GetFrameTime());
+	}
+
+	// Jump
+	//----------------------------------------------------------------------------------------
+	if (_player.canJump && IsKeyPressed (KEY_SPACE) && !_player.isAttacking){
 		_player.isJumping = true;
 		_player.UpdateJumping (GetFrameTime());
 		_player.canJump = false;
 	}
+	//----------------------------------------------------------------------------------------
 
-	if (_player.getCurrentState() == EntityStates::JUMPING && _player._Animation.isFinished) {
-		_player.isJumping = false;
+	// Attacks
+	//----------------------------------------------------------------------------------------
+	if (!_player.isAttacking) { 
+		_player.attacks_count = 0;
+		_player.late_ = 0.5f;
 	}
 
-	_player.checkState();
-	checkPlayerAnimation();
+	// if (_player.attacks_count == 3) {
+	// 	_player.attacks_count = 0;
+	// 	_player.late_ = 0.5f;
+	// }
+
+	if (IsMouseButtonPressed (MOUSE_BUTTON_LEFT) && !_player.isAttacking && !_player.isJumping) {
+		_player.isAttacking = true;
+		_player.attacks_count++;
+		_player.late_ = 0.5f;
+	}
+
+	if (IsMouseButtonPressed (MOUSE_BUTTON_LEFT) && _player.IsTimerActive && _player.attacks_count <= 2) {
+		_player.attacks_count++;
+		_player.late_ = 0.5f;
+	}
+
+	if (_player.attacks_count == 3 && _player.canJump && _player._Animation.frameCounter == 6) {
+		_player.UpdateJumping (GetFrameTime());
+		_player.canJump = false;
+	}
 	
-	if (IsKeyPressed (KEY_A) || IsKeyDown (KEY_A)) {
-		_player._Animation._flip = AnimatedSprite::FlipTexture::HORIZONTAL;
+	_player.delayPunch (GetFrameTime());
+	_player.checkCombo();
+	//----------------------------------------------------------------------------------------
+
+	_player.checkCurrentAnimation();
+	if (_player.getCurrentState() != EntityStates::ATTACK && 
+		 _player.getCurrentState() != EntityStates::JUMPING) {
+		_player.setAnimationFlip();
+	}
+};
+
+void UpdateGame()
+{
+	if (IsKeyPressed (KEY_ESCAPE)/* || !IsWindowFocused()*/)
+	{
+		// PauseGame();
+		QuitApplication();
+		return;
 	};
 
-	if (IsKeyPressed (KEY_D) || IsKeyDown (KEY_D)) {
-		_player._Animation._flip = AnimatedSprite::FlipTexture::NONE;
-	};
+	UpdatePlayer();
+
+
 };

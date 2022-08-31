@@ -21,7 +21,7 @@ void AnimatedSprite::setAnimation (std::string newState)
 	}
 };
 
-void AnimatedSprite::Draw (Vector2& pos, Color tint)
+void AnimatedSprite::Draw (Vector2& pos, float ftime, Color tint)
 {
 	if (loaded_anims[curr_state].mode == PlayMode::LOOP) {
 		if (frameCounter >= loaded_anims[curr_state].frames_amount) {
@@ -34,7 +34,7 @@ void AnimatedSprite::Draw (Vector2& pos, Color tint)
 	} else {
 		if (!isFinished) {
 			if (frameCounter >= loaded_anims[curr_state].frames_amount) {
-				frameCounter = 1;
+				frameCounter = 0;
 				isFinished = true;
 			};
 			if (_currFps >= loaded_anims[curr_state].fps) {
@@ -50,7 +50,7 @@ void AnimatedSprite::Draw (Vector2& pos, Color tint)
 		img.width = -img.width;
 	} else {
 		img.width = round(img.width);
-	};
+	}
 
 	// FrameRec.heights = GetTexture(loaded_anims[curr_state].img_id).height;
 	FrameRec.y = 0.0f;
@@ -58,11 +58,9 @@ void AnimatedSprite::Draw (Vector2& pos, Color tint)
 	FrameRec.width  = (float) GetTexture(loaded_anims[curr_state].img_id).width / loaded_anims[curr_state].frames_amount;
 	FrameRec.height = (float) GetTexture(loaded_anims[curr_state].img_id).height;
 
-	
-
 	DrawTextureRec (img, FrameRec, pos, tint);
 
-	_currFps += GetFrameTime();
+	_currFps += ftime;
 };
 
 void AnimatedSprite::setPlayMode (PlayMode mode)

@@ -49,7 +49,7 @@ void InitResources()
 	TexturesToLoad.emplace_back("resources/Graphics/Player/Mehses/Jumping/Jump/Player_Jumping_spriteshit1.png");
 	TexturesToLoad.emplace_back("resources/Graphics/Player/Mehses/Attacks/First Punch/Player_first_punch_spriteshit.png");
 	TexturesToLoad.emplace_back("resources/Graphics/Player/Mehses/Attacks/Second Punch/Player_second_punch_spriteshit.png");
-	TexturesToLoad.emplace_back("resources/Graphics/Player/Mehses/Attacks/Third Punch/Player_third_punch.spriteshit.png");
+	TexturesToLoad.emplace_back("resources/Graphics/Player/Mehses/Attacks/Third Punch/Player_third_punch_spriteshit.png");
 
 	TotalToLoad = TexturesToLoad.size();
 };

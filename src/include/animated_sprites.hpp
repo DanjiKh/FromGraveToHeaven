@@ -31,7 +31,7 @@ class AnimatedSprite
 		void setAnimation (std::string newState);
 		void setPlayMode  (PlayMode mode);
 		
-		void Draw (Vector2& pos, Color tint);
+		void Draw (Vector2& pos, float ftime, Color tint);
 
 	public:
 		PlayMode 	play_mode = PlayMode::LOOP;
@@ -47,7 +47,7 @@ class AnimatedSprite
 		int 		frameCounter = 0;
 
 	protected:
-		std::string 				  curr_state;
+		std::string curr_state;
 		std::map<std::string, Sprite> loaded_anims;
 
 };

@@ -45,7 +45,7 @@ class Player : public DynamicObject
 
 		int attacks_count;
 		float late_;
-		bool IsAttacking = false;
+		bool isAttacking = false;
 		bool IsTimerActive = false;
 		AnimatedSprite _Animation;
 		
@@ -57,6 +57,9 @@ class Player : public DynamicObject
 		void UpdateMoving 		 (float delT);
 		void UpdateJumping 		 (float delT);
 		void checkState ();
+
+		void checkCurrentAnimation ();
+		void setAnimationFlip ();
 
 		void delayPunch			 (float delT);
 			
@@ -79,6 +82,8 @@ class Player : public DynamicObject
 			}
 		};
 
+		void checkCombo();
+
 	private:
 		EntityStates _currentstate;
 };
@@ -93,102 +98,5 @@ class Boss : public DynamicObject
 		bool  	damage_counted;
 		float 	damage_coefficient;
 };
-
-template <class A, class B, class C, class D>
-void combo_check(A& a, B& b, C& c, D& d, Texture2D first_punch, Texture2D second_punch, Texture2D third_punch)
-		{
-			switch (a.attacks_count) {
-				case 1 :
-					a.IsTimerActive = true;
-
-					if (!b.isFinished) {
-						a.IsTimerActive = false;
-
-                        c.isFinished = false;
-                        c.frameCounter = 1;
-                        d.isFinished = false;
-                        d.frameCounter = 1;
-
-                       	b.Draw();
-
-					} else {
-						a.IsAttacking = false;
-						a.IsTimerActive = true;
-					}
-
-					if (a.late_ <= 2.0f) {
-						a.attacks_count = 0; 
-						a.late_ = 3.0f;
-						a.IsAttacking = false;
-						b.isFinished = false;
-                        b.frameCounter = 1;
-                        a.IsTimerActive = false;
-					}
-
-					break;
-
-				case 2 :
-					if (a.late_ >= 2.0f) { 
-						if(!c.isFinished) {
-							a.IsTimerActive = false;
-
-                        	b.isFinished = false;
-                        	b.frameCounter = 1;
-                        	d.isFinished = false;
-                        	d.frameCounter = 1;
-
-                        	c.Draw();
-
-						} else {
-							a.IsAttacking = false;
-							a.IsTimerActive = true;
-						}
-					} else if(a.late_ <= 2.0f) {
-						a.attacks_count = 0; 
-						a.late_ = 3.0f;
-						a.IsAttacking = false;
-						b.isFinished = false;
-                        b.frameCounter = 1;
-                        a.IsTimerActive = false;
-					}
-
-					break; 
-
-				case 3 :
-					if (a.late_ >= 1.0f) {
-						if (!d.isFinished) {
-							a.IsTimerActive = false;
-
-                        	c.isFinished = false;
-                        	c.frameCounter = 1;
-                        	b.isFinished = false;
-                        	b.frameCounter = 1;
-
-                        	d.Draw();
-						} else {
-							a.IsAttacking = false;
-							a.IsTimerActive = true;
-
-							a.late_ = 3.0f;
-							a.attacks_count = 0;
-							a.IsAttacking = false;
-
-							b.isFinished = false;
-                    		b.frameCounter = 1;
-						}
-					} else if(a.late_ <= 1.0f){
-						a.attacks_count = 0; 
-						a.late_ = 3.0f;
-						a.IsAttacking = false;
-						b.isFinished = false;
-						c.isFinished = false;
-                        b.frameCounter = 1;
-                        c.frameCounter = 1;
-                        a.IsTimerActive = false;
-					}
-
-					break;
-			}
-		};
 
 #endif
